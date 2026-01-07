@@ -10,6 +10,7 @@
 #include <sstream>
 
 using namespace std;
+const double INF = numeric_limits<double>::infinity();
 void generarGrafo(int numVertices, int densidad, double pesoMin, double pesoMax, string nombreArchivo) {
     ofstream archivo(nombreArchivo);
     
@@ -80,19 +81,59 @@ vector<vector<double>> leerGrafo(string nombreArchivo){
     entrada.close();
     return respuesta;
 }
+vector<double> leerGrafoAplanado(string nombreArchivo) {
+    ifstream archivo(nombreArchivo);
+
+    if (!archivo.is_open()) {
+        cerr << "Error: No se pudo abrir el archivo " << nombreArchivo << endl;
+        return {};
+    }
+
+    int numVertices;
+    long long numAristas;
+
+    archivo >> numVertices >> numAristas;
+
+    cout << "Leyendo grafo de " << numVertices << " vertices..." << endl;
+
+    vector<double> matriz((numVertices*numVertices),INF);
+
+    //diagonal principal en 0
+    for (int i = 0; i < numVertices; ++i) {
+        matriz[i*numVertices+i] = 0.0;
+    }
+
+    int u, v;
+    double w;
+
+    // Leemos hasta que se acabe el archivo o hayamos leido numAristas
+    // Tu formato es: origen destino peso
+    while (archivo >> u >> v >> w) {
+        // Validación de rango por seguridad
+        if (u >= 0 && u < numVertices && v >= 0 && v < numVertices) {
+            int index = u*numVertices+v;
+            if (w < matriz[index]) {
+                matriz[index] = w;
+            }
+        }
+    }
+
+    archivo.close();
+    cout << "Lectura finalizada." << endl;
+    
+    return matriz;
+}
+
+
+
 
 
 
 int main() {
-    generarGrafo(4096,100,1,1000,"4096_100_1.txt");
-    generarGrafo(4096,100,1,1000,"4096_100_2.txt");
-    generarGrafo(4096,100,1,1000,"4096_100_3.txt");
-    generarGrafo(4096,50,1,1000,"4096_50_1.txt");
-    generarGrafo(4096,50,1,1000,"4096_50_2.txt");
-    generarGrafo(4096,50,1,1000,"4096_50_3.txt");
-    generarGrafo(4096,25,1,1000,"4096_25_1.txt");
-    generarGrafo(4096,25,1,1000,"4096_25_2.txt");
-    generarGrafo(4096,25,1,1000,"4096_25_3.txt");
+    generarGrafo(1024,25,1,1000,"1024_25_1.txt");
+    generarGrafo(1024,25,1,1000,"1024_25_2.txt");
+    generarGrafo(1024,25,1,1000,"1024_25_3.txt");
+
 
     //leerGrafo("prueba.txt");
 }

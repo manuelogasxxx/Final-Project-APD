@@ -278,6 +278,39 @@ void blocked_floyd_warshall(vector<double>& dist, int N) {
     }
 }
 
+void ejecutar(vector<string> archivos,string salida){
+    ofstream archivoSalida(salida);
+    for(int i=0;i<archivos.size();i++){
+        ifstream entrada(archivos[i]);
+        vector<vector<double>>grafo = leerGrafo(archivos[i]);
+        auto inicio=chrono::high_resolution_clock::now();
+        floydWarshallOMP(grafo);
+        auto fin=chrono::high_resolution_clock::now();
+        chrono::duration<double> duracion = fin-inicio;
+        archivoSalida<<duracion.count() <<endl;
+        entrada.close();
+    }
+    archivoSalida.close();
+
+}
+
+void ejecutar2(vector<string> archivos,string salida,int tam){
+    ofstream archivoSalida(salida);
+    for(int i=0;i<archivos.size();i++){
+        ifstream entrada(archivos[i]);
+        vector<double>grafo = leerGrafoAplanado(archivos[i]);
+        auto inicio=chrono::high_resolution_clock::now();
+        //floydWarshallSecuencialOptimizado(grafo,tam);
+        //blocked_floyd_warshall(grafo,tam);
+        floydWarshallOMPOptimized(grafo,tam);
+        auto fin=chrono::high_resolution_clock::now();
+        chrono::duration<double> duracion = fin-inicio;
+        archivoSalida<<duracion.count() <<endl;
+        entrada.close();
+    }
+    archivoSalida.close();
+}
+
 int main() {
     
     
@@ -297,6 +330,21 @@ int main() {
         }
         cout<<"\n";
     }
+    vector<string> a = {"512_100_1.txt","512_100_2.txt","512_100_3.txt","512_50_1.txt","512_50_2.txt","512_50_3.txt","512_25_1.txt","512_25_2.txt","512_25_3.txt"};
+    vector<string> b = {"1024_100_1.txt","1024_100_2.txt","1024_100_3.txt","1024_50_1.txt","1024_50_2.txt","1024_50_3.txt","1024_25_1.txt","1024_25_2.txt","1024_25_3.txt"};
+    vector<string> c = {"2048_100_1.txt","2048_100_2.txt","2048_100_3.txt","2048_50_1.txt","2048_50_2.txt","2048_50_3.txt","2048_25_1.txt","2048_25_2.txt","2048_25_3.txt"};
+    vector<string> d = {"4096_100_1.txt","4096_100_2.txt","4096_100_3.txt","4096_50_1.txt","4096_50_2.txt","4096_50_3.txt","4096_25_1.txt","4096_25_2.txt","4096_25_3.txt"};
+    vector<string> e = {"8192_100_1.txt","8192_100_2.txt","8192_100_3.txt","8192_50_1.txt","8192_50_2.txt","8192_50_3.txt","8192_25_1.txt","8192_25_2.txt","8192_25_3.txt"};
+    //ejecutar(a,"tiempos_1024_serial.txt");
+    //ejecutar(b,"tiempos_2048_serial.txt");
+    ejecutar(a,"tiempos_512_OMP1.txt");
+    ejecutar(b,"tiempos_1024_OMP1.txt");
+    ejecutar(c,"tiempos_2048_OMP1.txt");
+    ejecutar(d,"tiempos_4096_OMP1.txt");
+    ejecutar(e,"tiempos_8192_OMP1.txt");
+    //ejecutar2(a,"tiempos_512_serial_opt.txt",512);
+    //ejecutar2(c,"tiempos_2048_serial_opt.txt",2048);
+    //ejecutar2(e,"tiempos_8192_serial_opt.txt",8192);
     
     /*
     ofstream salida("tiempoSerialOpt_1024.txt");
